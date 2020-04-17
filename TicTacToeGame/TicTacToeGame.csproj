@@ -138,9 +138,10 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="TicTacToeField.jpg" />
+    <Content Include="TicTacToeField.png" />
     <Content Include="TicTacToe_circle.png" />
     <Content Include="TicTacToe_cross.png" />
+    <Content Include="TicTacToe_restart.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

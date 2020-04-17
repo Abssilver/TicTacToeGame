@@ -23,51 +23,80 @@ namespace TicTacToeGame
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        int ceilWIdth;
+        int cellWIdth;
         int[,] map = new int[3, 3] { {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1 } };
         string player = "cross";
         int checkResult;
         string displayText;
+        Random rand = new Random();
+        DispatcherTimer tmr;
+        bool playerTurn = true;
+        bool gameOver = false;
         public MainPage()
         {
             this.InitializeComponent();
+            tmr = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 2) };
+            tmr.Tick += Tmr_Tick;
+        }
+
+        private void Tmr_Tick(object sender, object e)
+        {
+            if (AvaiblePlacement() && !gameOver)
+            {
+                AITurn();
+                playerTurn = !playerTurn;
+            }
+            tmr.Stop();
         }
 
         private void Canv_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            int x = ((int)e.GetPosition(Canv).X) / ceilWIdth;
-            int y = ((int)e.GetPosition(Canv).Y) / ceilWIdth;
-            
-            if (map[x,y]==-1)
+            if (listView.IsEnabled)
+                listView.IsEnabled = false;
+            if (playerTurn && !gameOver)
             {
-                Image img = new Image();
-                BitmapImage bi = new BitmapImage();
-                bi.UriSource = new Uri(Canv.BaseUri, $"TicTacToe_{player}.png");
-                img.Width = ceilWIdth;
-                img.Height = ceilWIdth;
-                img.Source = bi;
-                img.Stretch = Stretch.Fill;
-                img.Margin = new Thickness(x * ceilWIdth, y * ceilWIdth, 0, 0);
-                Canv.Children.Add(img);
-                map[x, y] = player == "cross" ? 1 : 0;
-                player = player == "cross" ? "circle" : "cross";
-                checkResult = Check();
-                switch (checkResult)
+                playerTurn = !playerTurn;
+                int x = ((int)e.GetPosition(Canv).X) / cellWIdth;
+                int y = ((int)e.GetPosition(Canv).Y) / cellWIdth;
+
+                if (map[x, y] == -1)
                 {
-                    case 0:
-                        displayText = "Circles won!";
-                        break;
-                    case 1:
-                        displayText = "Crosses won!";
-                        break;
-                    default:
-                        displayText = $"It's {player}'s turn";
-                        break;
+                    DrawImage(x, y);
                 }
-                Result.Text = displayText;
+                tmr.Start();
             }
         }
-        
+
+        private void DrawImage(int x, int y)
+        {
+            Image img = new Image();
+            BitmapImage bi = new BitmapImage();
+            bi.UriSource = new Uri(Canv.BaseUri, $"TicTacToe_{player}.png");
+            img.Width = cellWIdth;
+            img.Height = cellWIdth;
+            img.Source = bi;
+            img.Stretch = Stretch.Fill;
+            img.Margin = new Thickness(x * cellWIdth, y * cellWIdth, 0, 0);
+            Canv.Children.Add(img);
+            map[x, y] = player == "cross" ? 1 : 0;
+            player = player == "cross" ? "circle" : "cross";
+            checkResult = Check();
+            switch (checkResult)
+            {
+                case 0:
+                    displayText = "Circles won!";
+                    gameOver = true;
+                    break;
+                case 1:
+                    displayText = "Crosses won!";
+                    break;
+                default:
+                    displayText = $"It's {player}'s turn";
+                    break;
+            }
+            Result.Text = displayText;
+        }
+
         int Check() 
         {
            int toReturn=-1;
@@ -125,8 +154,37 @@ namespace TicTacToeGame
         }
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            ceilWIdth = (int)Canv.Height / 3;
+            cellWIdth = (int)Canv.Height / 3;
             Result.Text = "Start your game!";
+        }
+
+        bool AvaiblePlacement()
+        {
+            foreach (var cell in map)
+            {
+                if (cell == -1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        void AITurn()
+        {
+            int x = rand.Next(0, map.GetUpperBound(0) + 1);
+            int y = rand.Next(0, map.GetUpperBound(0) + 1);
+            while (map[x,y]!=-1)
+            {
+                x = rand.Next(0, map.GetUpperBound(0) + 1);
+                y = rand.Next(0, map.GetUpperBound(0) + 1);
+            }
+            DrawImage(x,y);
+        }
+
+        private void Image_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            int user = Convert.ToInt32((sender as Image).Tag);
+            player = user == 0 ? "circle" : "cross";
         }
     }
 }

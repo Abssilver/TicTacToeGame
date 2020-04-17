@@ -13,9 +13,27 @@
                 Height="450"
                 x:Name="Canv" Tapped="Canv_Tapped">
             <Canvas.Background>
-                <ImageBrush ImageSource="/TicTacToeField.jpg"/>
+                <ImageBrush ImageSource="/TicTacToeField.png"/>
             </Canvas.Background>
         </Canvas>
-    <TextBlock x:Name="Result" VerticalAlignment="Top" FontSize="30" />
+        <TextBlock x:Name="Result" 
+                   VerticalAlignment="Top" 
+                   FontSize="30" />
+        <ListView x:Name="listView"
+                  VerticalAlignment="Bottom"
+                  HorizontalAlignment="Center"
+                  Width="66"
+                  Height="90">
+            <Image Source="TicTacToe_cross.png"
+                   Tag ="1"
+                   Width="40"
+                   Height="40" Tapped="Image_Tapped"
+                   />
+            <Image Source="TicTacToe_circle.png"
+                   Tag ="0"
+                   Width="40"
+                   Height="40" Tapped="Image_Tapped"
+                   />
+        </ListView>
     </Grid>
 </Page>
